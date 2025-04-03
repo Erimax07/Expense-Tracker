@@ -1,9 +1,19 @@
 <script lang="ts" setup>
 import { userStore } from '@/main';
+import router from '@/router';
 import { usePositionsStore } from '@/stores/counter';
 import { ref } from 'vue';
 const storePositions = ref(usePositionsStore())
 console.log(storePositions.value.positions[0]);
+
+function newPosition () {
+  storePositions.value.setLocalNull()
+  router.push('/EdditPosition')
+}
+function edditPosition () {
+  storePositions.value.setLocalNull()
+  router.push('/EdditPosition')
+}
 
    
 </script>
@@ -20,9 +30,13 @@ export default {
       <li class="position" v-for="(pos, index) in storePositions.positions" :key="index" :class="{expense:pos.type == 'expense', income:pos.type == 'income'}">
         {{ pos.title }}    
         {{ pos.amount }}€
+        <button type="button" >Eddit</button>
         <hr>
       </li>
     </ol>
+  </div>
+  <div>
+    <button type="button" v-on:click="newPosition()">newPosition</button>
   </div>
 </template>
 

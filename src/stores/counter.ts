@@ -1,5 +1,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
+import type { RefSymbol } from "@vue/reactivity";
 
 export const usePositionsStore = defineStore("positions", () => {
   interface Position {
@@ -26,6 +27,8 @@ export const usePositionsStore = defineStore("positions", () => {
       date: new Date(), // Initializes with the current date
     };
   };
+
+
   let idCount = 6;
   const positions = ref<Position[]>([
     createPosition(1, "Software Engineer", 5000, "income", "Tech"),
@@ -34,18 +37,24 @@ export const usePositionsStore = defineStore("positions", () => {
     createPosition(4, "Data Scientist", 6000, "income", "Analytics"),
     createPosition(5, "Marketing Specialist", 4000, "expense", "Marketing"),
   ]);
-  
-console.log(positions);
 
-  function addPosition(
-    title: string,
-    amount: number,
-    type: "expense"| "income",
-    category: string
-  ){
-    positions.value[positions.value.length] = createPosition(idCount, title, amount, type, category)
+  const localPosition = ref<Position>(setLocalNull());
+
+  function setLocalNull (): Position {
+    return createPosition(0, "", 0, "income", "")
+  }
+  function pushToPositions () {
+    localPosition.value.id = idCount
+    
+    positions.value[positions.value.length] = localPosition.value
+    localPosition.value = setLocalNull();
     idCount++
   }
 
-  return { positions };
+  
+console.log(positions);
+
+
+
+  return { positions, localPosition, pushToPositions, setLocalNull };
 });
