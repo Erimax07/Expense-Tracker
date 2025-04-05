@@ -1,6 +1,8 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import type { RefSymbol } from "@vue/reactivity";
+import router from "@/router";
+import type { forEachChild } from "typescript";
 
 export const usePositionsStore = defineStore("positions", () => {
   interface Position {
@@ -41,14 +43,59 @@ export const usePositionsStore = defineStore("positions", () => {
   const localPosition = ref<Position>(setLocalNull());
 
   function setLocalNull (): Position {
-    return createPosition(0, "", 0, "income", "")
+    return createPosition(-1, "", 0, "income", "")
   }
-  function pushToPositions () {
-    localPosition.value.id = idCount
-    
+  function pushNewToPositions () {
+    localPosition.value.id = findBiggestIdInPositions()+1
     positions.value[positions.value.length] = localPosition.value
+    resetlocal()
+  }
+
+  function findBiggestIdInPositions (): number {
+    let biggestId = -1;
+    positions.value.forEach(element => {
+      if(biggestId < element.id){
+        biggestId = element.id
+      } 
+    });
+    return biggestId
+  }
+    
+  function resetlocal(){
     localPosition.value = setLocalNull();
-    idCount++
+  }
+
+
+  function pushToId(id:number) {
+    let index:number = -1
+    index = positions.value.findIndex((pos:Position) => {
+      return pos.id == id
+    }
+      );
+
+      if(index == -1) return
+      if (true) {
+        console.log(index);
+        
+        positions.value[index] = localPosition.value;
+        resetlocal()
+        router.push("/");
+      } else {
+        console.warn("Position not found for ID:", index);
+      }
+
+  }
+
+  
+  function setEdditData(id:number){
+
+    const found = positions.value.find((pos) => pos.id === id);
+  if (found) {
+    localPosition.value = found;
+    router.push('/EdditPosition')
+  } else {
+    console.warn("Position not found for ID:", id);
+  }
   }
 
   
@@ -56,5 +103,5 @@ console.log(positions);
 
 
 
-  return { positions, localPosition, pushToPositions, setLocalNull };
+  return { positions, localPosition, pushNewToPositions, setLocalNull, setEdditData, pushToId, resetlocal };
 });
