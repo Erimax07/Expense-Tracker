@@ -31,20 +31,20 @@ export const useTransactionStore = defineStore("positions", () => {
   };
 
 
-  const transactions = [
+  const transactions = ref([
     createPosition(1, "Software Engineer", 5000, "income", "Tech"),
     createPosition(2, "Project Manager", 7000, "income", "Management"),
     createPosition(3, "UX Designer", 4500, "expense", "Design"),
     createPosition(4, "Data Scientist", 6000, "income", "Analytics"),
     createPosition(5, "Marketing Specialist", 4000, "expense", "Marketing"),
-  ];
+  ]);
 
 
   
 
   function findBiggestIdInPositions (): number {
     let biggestId = -1;
-    transactions.forEach(element => {
+    transactions.value.forEach(element => {
       if(biggestId < element.id){
         biggestId = element.id
       } 
@@ -54,12 +54,12 @@ export const useTransactionStore = defineStore("positions", () => {
     
   function puchNewToLast (trans:Transaction) {
     trans.id = findBiggestIdInPositions()+1
-    transactions.push({ ...trans})
+    transactions.value.push({ ...trans})
   }
 
   function pushToId(id:number, pos:Transaction) {
     let index:number = -1
-    index = transactions.findIndex((pos:Transaction) => {
+    index = transactions.value.findIndex((pos:Transaction) => {
       return pos.id == id
     }
       );
@@ -67,7 +67,7 @@ export const useTransactionStore = defineStore("positions", () => {
       
         console.log(index);
         
-        transactions[index] = { ...pos };
+        transactions.value[index] = { ...pos };
         
         router.push("/");
       

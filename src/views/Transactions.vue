@@ -38,11 +38,18 @@ function edditTransaction(obj:Transaction){
 
 const searchQuerry = ref('');
 const selectedFilter = ref('');
-const filterTasks = ref(computed(()=>{
-        if(selectedFilter.value == '') return transactions
-        if(selectedFilter.value == 'showExpenses') return transactions.value.filter((t) => t.type == "expense")
-        if(selectedFilter.value == 'showIncome') return transactions.value.filter((t) => t.type =="income")
-    }))
+const filterTasks = computed(()=>{
+        if(selectedFilter.value == "") return transactionStore.value
+        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
+        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
+    })
+
+function updateFilter ():Transaction[] {
+        if(selectedFilter.value == "") return transactionStore.value.transactions
+        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
+        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
+  return transactionStore.value.transactions
+}
 
 
 // const querryTasks = computed(()=>{
@@ -56,7 +63,7 @@ const filterTasks = ref(computed(()=>{
 //   }
 // })
 function test(){
-  console.log(filterTasks);
+  console.log(filterTasks, selectedFilter.value == "", transactionStore.value.transactions);
   
 }
 
