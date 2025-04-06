@@ -36,21 +36,6 @@ function edditTransaction(obj:Transaction){
 
 
 
-const searchQuerry = ref('');
-const selectedFilter = ref('');
-const filterTasks = computed(()=>{
-        if(selectedFilter.value == "") return transactionStore.value
-        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
-        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
-    })
-
-function updateFilter ():Transaction[] {
-        if(selectedFilter.value == "") return transactionStore.value.transactions
-        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
-        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
-  return transactionStore.value.transactions
-}
-
 
 // const querryTasks = computed(()=>{
 //   if(searchQuerry.value == ""){
@@ -78,6 +63,23 @@ function checkName(p:Transaction):boolean{
 export default {
   name: "Transactions",
 };
+
+const searchQuerry = ref('');
+const selectedFilter = ref('');
+
+
+const filterTasks = computed(()=>{
+        if(selectedFilter.value == "") return transactionStore.value
+        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
+        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
+    })
+
+function updateFilter ():Transaction[] {
+        if(selectedFilter.value == "") return transactionStore.value.transactions
+        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
+        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
+  return transactionStore.value.transactions
+}
 </script>
 
 <template>
