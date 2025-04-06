@@ -25,7 +25,7 @@ const transactions = computed(()=>{
 
 
 function newTransaction(){
-  edditStore.value.createNewTransactionObject
+  edditStore.value.createNewTransactionObject()
   router.push('/EdditTransaction')
 }
 
@@ -36,19 +36,28 @@ function edditTransaction(obj:Transaction){
 
 
 
+const searchQuerry = ref('');
+const selectedFilter = ref('');
+const filteredAndSearchedTransactions = computed(() => {
+  let filtered = transactionStore.value.transactions;
 
-// const querryTasks = computed(()=>{
-//   if(searchQuerry.value == ""){
-//     console.log("hi");
-    
-//     return filterTasks.value
-//   }
-//   else{
-//     return filterTasks.value.filter((t)=> checkName(t))
-//   }
-// })
+  if (selectedFilter.value === "showExpenses") {
+    filtered = filtered.filter(t => t.type === "expense");
+  } else if (selectedFilter.value === "showIncome") {
+    filtered = filtered.filter(t => t.type === "income");
+  }
+
+  if (searchQuerry.value.trim() !== "") {
+    filtered = filtered.filter(t =>
+      t.title.toLowerCase().includes(searchQuerry.value.toLowerCase())
+    );
+  }
+
+  return filtered;
+});
+
 function test(){
-  console.log(filterTasks, selectedFilter.value == "", transactionStore.value.transactions);
+  console.log(filteredAndSearchedTransactions.value);
   
 }
 
@@ -63,23 +72,6 @@ function checkName(p:Transaction):boolean{
 export default {
   name: "Transactions",
 };
-
-const searchQuerry = ref('');
-const selectedFilter = ref('');
-
-
-const filterTasks = computed(()=>{
-        if(selectedFilter.value == "") return transactionStore.value
-        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
-        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
-    })
-
-function updateFilter ():Transaction[] {
-        if(selectedFilter.value == "") return transactionStore.value.transactions
-        if(selectedFilter.value == 'showExpenses') return transactionStore.value.transactions.filter((t) => t.type == "expense")
-        if(selectedFilter.value == 'showIncome') return transactionStore.value.transactions.filter((t) => t.type =="income")
-  return transactionStore.value.transactions
-}
 </script>
 
 <template>
@@ -94,7 +86,7 @@ function updateFilter ():Transaction[] {
   </div>
   <div class="umsatz">
     <ol>
-      <li class="position" v-for="(pos, index) in transactions" :key="index" :class="{expense:pos.type == 'expense', income:pos.type == 'income'}">
+      <li class="position" v-for="(pos, index) in filteredAndSearchedTransactions" :key="index" :class="{expense:pos.type == 'expense', income:pos.type == 'income'}">
         {{ pos.title }}    
         {{ pos.amount }}€
         <button type="button" v-on:click="edditTransaction(pos)">Eddit</button>
