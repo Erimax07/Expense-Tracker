@@ -38,12 +38,12 @@ function edditTransaction(obj:Transaction){
 
 const searchQuerry = ref('');
 const selectedFilter = ref('');
-const filterTasks = computed(()=>{
-        if(selectedFilter.value == "") return transactions
+const filterTasks = ref(computed(()=>{
+        if(selectedFilter.value == '') return transactions
         if(selectedFilter.value == 'showExpenses') return transactions.value.filter((t) => t.type == "expense")
         if(selectedFilter.value == 'showIncome') return transactions.value.filter((t) => t.type =="income")
-        return transactions
-    })
+    }))
+
 
 // const querryTasks = computed(()=>{
 //   if(searchQuerry.value == ""){
@@ -55,7 +55,10 @@ const filterTasks = computed(()=>{
 //     return filterTasks.value.filter((t)=> checkName(t))
 //   }
 // })
-
+function test(){
+  console.log(filterTasks);
+  
+}
 
 function checkName(p:Transaction):boolean{
   let name = p.title
@@ -92,6 +95,7 @@ export default {
   </div>
   <div>
     <button type="button" v-on:click="newTransaction">newPosition</button>
+    <button type="button" v-on:click="test">TEST</button>
   </div>
 </template>
 
