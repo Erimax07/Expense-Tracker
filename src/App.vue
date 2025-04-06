@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import EdditTransaction from './views/edditTransaction.vue';
 
 
 </script>
@@ -12,12 +13,11 @@ import { RouterLink, RouterView } from 'vue-router'
       <div class="buttons">
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/Describtion">Describtion</RouterLink>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/Transactions">Home</RouterLink>
 
       </div>
     </nav>
     <RouterView></RouterView>
-
     
   
 </template>
