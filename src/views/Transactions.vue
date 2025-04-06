@@ -1,71 +1,92 @@
 <script lang="ts" setup>
-import { userStore } from '@/main';
-import router from '@/router';
-import { useTransactionStore, useEdditStore } from '@/stores/transactions';
-import { ref, computed } from 'vue';
-const transactionStore = ref(useTransactionStore())
-const edditStore = ref(useEdditStore())
+import { userStore } from "@/main";
+import router from "@/router";
+import { useTransactionStore, useEdditStore } from "@/stores/transactions";
+import { ref, computed } from "vue";
+const transactionStore = ref(useTransactionStore());
+const edditStore = ref(useEdditStore());
 console.log(transactionStore.value.transactions[0]);
 
-
 interface Transaction {
-    id: number;
-    title: String;
-    amount: number;
-    type: String;
-    category: String;
-    date: Date;
-  }
-
-
-
-const transactions = computed(()=>{
-  return transactionStore.value.transactions
-})
-
-
-function newTransaction(){
-  edditStore.value.createNewTransactionObject()
-  router.push('/EdditTransaction')
+  id: number;
+  title: String;
+  amount: number;
+  type: String;
+  category: String;
+  date: Date;
 }
 
-function edditTransaction(obj:Transaction){
-  edditStore.value.cloneNewObject(obj)
-  router.push('/EdditTransaction')
+const transactions = computed(() => {
+  return transactionStore.value.transactions;
+});
+
+function newTransaction() {
+  edditStore.value.createNewTransactionObject();
+  router.push("/EdditTransaction");
 }
 
+function edditTransaction(obj: Transaction) {
+  edditStore.value.cloneNewObject(obj);
+  router.push("/EdditTransaction");
+}
 
-
-const searchQuerry = ref('');
-const selectedFilter = ref('');
+const searchQuerry = ref("");
+const selectedFilter = ref("");
+const selectedSort = ref("");
 const filteredAndSearchedTransactions = computed(() => {
   let filtered = transactionStore.value.transactions;
+  filtered = []
+
+  transactionStore.value.transactions.forEach(obj => {
+    filtered.push(JSON.parse(JSON.stringify(obj)) as typeof obj)
+  });
 
   if (selectedFilter.value === "showExpenses") {
-    filtered = filtered.filter(t => t.type === "expense");
+    filtered = filtered.filter((t) => t.type === "expense");
   } else if (selectedFilter.value === "showIncome") {
-    filtered = filtered.filter(t => t.type === "income");
+    filtered = filtered.filter((t) => t.type === "income");
   }
 
   if (searchQuerry.value.trim() !== "") {
-    filtered = filtered.filter(t =>
+    filtered = filtered.filter((t) =>
       t.title.toLowerCase().includes(searchQuerry.value.toLowerCase())
     );
   }
-
+  console.log(filtered[0].date);
+  
+  if (selectedSort.value == "byValue") {
+    filtered.sort((n1, n2) => {
+      if (n1.amount > n2.amount) {
+        return 1;
+      }
+      if (n1.amount < n2.amount) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+  if (selectedSort.value == "byDate") {
+    filtered.sort((n1, n2) => {
+      if (n1.date.getTime() > n2.date.getTime()) {
+        return 1;
+      }
+      if (n1.date.getTime() < n2.date.getTime()) {
+        return -1;
+      }
+      return 0;
+    });
+  }
   return filtered;
 });
 
-function test(){
+function test() {
   console.log(filteredAndSearchedTransactions.value);
-  
 }
 
-function checkName(p:Transaction):boolean{
-  let name = p.title
+function checkName(p: Transaction): boolean {
+  let name = p.title;
   return name.toLowerCase().includes(searchQuerry.value.toLowerCase());
 }
-   
 </script>
 
 <script lang="ts">
@@ -76,23 +97,41 @@ export default {
 
 <template>
   <div class="settings">
-    <p>Filter: </p>
+    <p>Filter:</p>
     <select name="Hi" id="filterSelected" v-model="selectedFilter">
       <option value="">none</option>
       <option value="showExpenses">showExpenses</option>
       <option value="showIncome">showIncome</option>
     </select>
-    <p>Search: </p> <input type="text" name="" id="" v-model="searchQuerry">
+    <p>Search:</p>
+    <input type="text" name="" id="" v-model="searchQuerry" />
+    <p>Sort: </p>
+    <select name="Hi" id="filterSelected" v-model="selectedSort">
+      <option value="">none</option>
+      <option value="byValue">byValue</option>
+      <option value="byDate">byDate</option>
+    </select>
   </div>
   <div class="umsatz">
     <ol>
-      <li class="position" v-for="(pos, index) in filteredAndSearchedTransactions" :key="index" :class="{expense:pos.type == 'expense', income:pos.type == 'income'}">
-        {{ pos.title }}    
+      <li
+        class="position"
+        v-for="(pos, index) in filteredAndSearchedTransactions"
+        :key="index"
+        :class="{
+          expense: pos.type == 'expense',
+          income: pos.type == 'income',
+        }"
+      >
+        {{ pos.title }}
         {{ pos.amount }}€
         <button type="button" v-on:click="edditTransaction(pos)">Eddit</button>
-        <hr>
+        <hr />
       </li>
     </ol>
+  </div>
+  <div class="stats">
+    {{ transactionStore.total }}
   </div>
   <div>
     <button type="button" v-on:click="newTransaction">newPosition</button>
@@ -101,42 +140,42 @@ export default {
 </template>
 
 <style>
-ol{
+ol {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
 }
-.umsatz{
+.umsatz {
   width: fit-content;
   border: 2px black solid;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
-  .position{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5px;
-    margin: 0.3rem;
-    border: 1px solid black;
-    border-radius: 1rem;
-  }
-  .expense{
-    background-color: red;
-  }
-  .income{
-    background-color: green;
-  }
-  .settings{
-    display: flex;
-    flex-direction: row;
-    padding: 3px;
-  }
-  .settings > *{
-    max-width: fit-content;
-    padding: 3px;
-    max-height: fit-content;
-  }
+.position {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  margin: 0.3rem;
+  border: 1px solid black;
+  border-radius: 1rem;
+}
+.expense {
+  background-color: red;
+}
+.income {
+  background-color: green;
+}
+.settings {
+  display: flex;
+  flex-direction: row;
+  padding: 3px;
+}
+.settings > * {
+  max-width: fit-content;
+  padding: 3px;
+  max-height: fit-content;
+}
 </style>

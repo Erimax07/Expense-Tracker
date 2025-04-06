@@ -40,7 +40,18 @@ export const useTransactionStore = defineStore("positions", () => {
   ]);
 
 
-  
+  const total = ref(computed(()=>{
+    let t = 0;
+    transactions.value.forEach((el)=>{
+      if(el.type == "income"){
+        t+=el.amount
+      }
+      else{
+        t-= el.amount
+      }
+    })
+    return t
+  }))
 
   function findBiggestIdInPositions (): number {
     let biggestId = -1;
@@ -74,7 +85,7 @@ export const useTransactionStore = defineStore("positions", () => {
 
   }
 
-  return { transactions, findBiggestIdInPositions, pushToId, puchNewToLast};
+  return { transactions, findBiggestIdInPositions, pushToId, puchNewToLast, total};
 });
 
 export const useEdditStore = defineStore("eddit", ()=>{

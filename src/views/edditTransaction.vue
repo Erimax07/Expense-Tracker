@@ -21,6 +21,7 @@ function submitForm() {
   if (!transaction) return;
 
   if (transaction.id === -1) {
+    transaction.date = new Date()
     tStore.puchNewToLast(transaction);
   } else {
     tStore.pushToId(transaction.id, transaction);
@@ -85,6 +86,7 @@ export default {
           required
         />
       </div>
+      {{ selectedTransaction.date }}
 
       <button type="submit" class="submit-btn" v-on:click="submitForm">Save</button>
     </form>
