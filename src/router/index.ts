@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Describtion from '../views/Describtion.vue'
-import Dashboard from '@/views/Dashboard.vue'
-import EdditPosition from '@/views/EdditPosition.vue'
+import edditTransaction from '@/views/edditTransaction.vue'
+import Transactions from '@/views/Transactions.vue'
+import EdditTransaction from '@/views/edditTransaction.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Dashboard',
-      component: Dashboard,
+      path: '/Transactions',
+      name: 'Transactions',
+      component: Transactions,
     },
     {
       path: '/Describtion',
@@ -17,9 +18,9 @@ const router = createRouter({
       component: Describtion,
     },
     {
-      path: '/EdditPosition',
+      path: '/EdditTransaction',
       name: 'EdditPosition',
-      component: EdditPosition,
+      component: EdditTransaction,
     },
   ],
 })
