@@ -17,7 +17,7 @@ export const useTransactionStore = defineStore("positions", () => {
     tid: number,
     title: string,
     amount: number,
-    type: "expense"| "income",
+    type: "expense" | "income",
     category: string
   ): Transaction => {
     return {
@@ -30,7 +30,6 @@ export const useTransactionStore = defineStore("positions", () => {
     };
   };
 
-
   const transactions = ref([
     createPosition(1, "Software Engineer", 5000, "income", "Tech"),
     createPosition(2, "Project Manager", 7000, "income", "Management"),
@@ -39,56 +38,94 @@ export const useTransactionStore = defineStore("positions", () => {
     createPosition(5, "Marketing Specialist", 4000, "expense", "Marketing"),
   ]);
 
-
-  const total = ref(computed(()=>{
-    let t = 0;
-    transactions.value.forEach((el)=>{
-      if(el.type == "income"){
-        t+=el.amount
-      }
-      else{
-        t-= el.amount
-      }
+  const totalExpenses = ref(
+    computed(() => {
+      let t = 0;
+      transactions.value.forEach((el) => {
+        if (el.type == "expense") {
+          t += el.amount;
+        }
+      });
+      return t;
     })
-    return t
-  }))
+  );
 
-  function findBiggestIdInPositions (): number {
+  const totalIncome = ref(
+    computed(() => {
+      let t = 0;
+      transactions.value.forEach((el) => {
+        if (el.type == "income") {
+          t += el.amount;
+        }
+      });
+      return t;
+    })
+  );
+
+  const total = ref(
+    computed(() => {
+      let t = 0;
+      transactions.value.forEach((el) => {
+        if (el.type == "income") {
+          t += el.amount;
+        } else {
+          t -= el.amount;
+        }
+      });
+      return t;
+    })
+  );
+
+  function findBiggestIdInPositions(): number {
     let biggestId = -1;
-    transactions.value.forEach(element => {
-      if(biggestId < element.id){
-        biggestId = element.id
-      } 
+    transactions.value.forEach((element) => {
+      if (biggestId < element.id) {
+        biggestId = element.id;
+      }
     });
-    return biggestId
-  }
-    
-  function puchNewToLast (trans:Transaction) {
-    trans.id = findBiggestIdInPositions()+1
-    transactions.value.push({ ...trans})
+    return biggestId;
   }
 
-  function pushToId(id:number, pos:Transaction) {
-    let index:number = -1
-    index = transactions.value.findIndex((pos:Transaction) => {
-      return pos.id == id
-    }
-      );
-      if(index == -1) return
-      
-        console.log(index);
-        
-        transactions.value[index] = { ...pos };
-        
-        router.push("/");
-      
-
+  function puchNewToLast(trans: Transaction) {
+    trans.id = findBiggestIdInPositions() + 1;
+    transactions.value.push({ ...trans });
   }
 
-  return { transactions, findBiggestIdInPositions, pushToId, puchNewToLast, total};
+  function pushToId(id: number, pos: Transaction) {
+    let index: number = -1;
+    index = transactions.value.findIndex((pos: Transaction) => {
+      return pos.id == id;
+    });
+    if (index == -1) return;
+
+    console.log(index);
+
+    transactions.value[index] = { ...pos };
+
+    router.push("/");
+  }
+
+  function removeElement(id: number) {
+    let index: number = -1;
+    index = transactions.value.findIndex((pos: Transaction) => {
+      return pos.id == id;
+    });
+    if (index == -1) return;
+    transactions.value.splice(index, 1);
+  }
+  return {
+    transactions,
+    findBiggestIdInPositions,
+    pushToId,
+    puchNewToLast,
+    total,
+    totalIncome,
+    totalExpenses,
+    removeElement,
+  };
 });
 
-export const useEdditStore = defineStore("eddit", ()=>{
+export const useEdditStore = defineStore("eddit", () => {
   interface Transaction {
     id: number;
     title: String;
@@ -101,7 +138,7 @@ export const useEdditStore = defineStore("eddit", ()=>{
     tid: number,
     title: string,
     amount: number,
-    type: "expense"| "income",
+    type: "expense" | "income",
     category: string
   ): Transaction => {
     return {
@@ -114,13 +151,15 @@ export const useEdditStore = defineStore("eddit", ()=>{
     };
   };
 
-  const selectedTransaction = ref<Transaction>(createPosition(-1, '', 0, "expense", ""))
-  createNewTransactionObject()
-  function createNewTransactionObject () {
-    selectedTransaction.value = createPosition(-1, '', 0, "expense", "")
+  const selectedTransaction = ref<Transaction>(
+    createPosition(-1, "", 0, "expense", "")
+  );
+  createNewTransactionObject();
+  function createNewTransactionObject() {
+    selectedTransaction.value = createPosition(-1, "", 0, "expense", "");
   }
-  function cloneNewObject (trans:Transaction) {
-    selectedTransaction.value = { ...trans }
+  function cloneNewObject(trans: Transaction) {
+    selectedTransaction.value = { ...trans };
   }
-  return {selectedTransaction, createNewTransactionObject, cloneNewObject}
-})
+  return { selectedTransaction, createNewTransactionObject, cloneNewObject };
+});

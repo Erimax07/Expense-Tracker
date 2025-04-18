@@ -3,10 +3,18 @@ import Describtion from '../views/Describtion.vue'
 import edditTransaction from '@/views/edditTransaction.vue'
 import Transactions from '@/views/Transactions.vue'
 import EdditTransaction from '@/views/edditTransaction.vue'
+import Dashboard from '@/views/Dashboard.vue'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: Dashboard,
+    },
     {
       path: '/Transactions',
       name: 'Transactions',
@@ -22,6 +30,7 @@ const router = createRouter({
       name: 'EdditPosition',
       component: EdditTransaction,
     },
+    
   ],
 })
 
